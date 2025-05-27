@@ -1,0 +1,45 @@
+states: q0,q1,q2,q3,q4,q5,q6,q7,q_accept
+tape_alphabet: 0,1,$,#,_,X
+blank: _
+start_state: q0
+accept_states: q_accept
+
+transitions:
+q0 0 -> q1 X R
+q0 1 -> q6 X R
+q0 $ -> q7 $ R
+
+q1 0 -> q1 0 R
+q1 1 -> q1 1 R
+q1 $ -> q1 $ R
+q1 _ -> q1 _ R
+q1 # -> q2 # R
+
+q6 0 -> q6 0 R
+q6 1 -> q6 1 R
+q6 $ -> q6 $ R
+q6 _ -> q6 _ R
+q6 # -> q2 # R
+
+q2 0 -> q2 0 R
+q2 1 -> q2 1 R
+q2 _ -> q3 _ L
+q2 # -> q2 # R
+
+q3 _ -> q4 _ L
+
+q4 0 -> q4 0 L
+q4 1 -> q4 1 L
+q4 X -> q5 X R
+q4 $ -> q4 $ L
+q4 _ -> q4 _ L
+q4 # -> q4 # L
+
+q5 0 -> q0 0 R
+q5 1 -> q0 1 R
+q5 X -> q0 X R
+q5 $ -> q0 $ R
+q5 _ -> q0 _ R
+q5 # -> q0 # R
+
+q7 _ -> q_accept _ S
