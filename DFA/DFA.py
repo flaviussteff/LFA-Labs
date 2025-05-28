@@ -1,65 +1,59 @@
-#accepta toate sirurile care contin cel putin o aparitie a substringului 011
-class DFA:
-    def __init__(self, config_file):
-        self.load_config(config_file)
-        self.current_state = self.start_state
+def citeste_dfa(drum_fisier):
+    with open(drum_fisier, 'r') as fisier:
+        linii = [linie.strip() for linie in fisier if linie.strip() and not linie.startswith('#')]
 
-    def load_config(self, filename):
-        with open(filename) as f:
-            lines = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+    configuratie = {
+        'stari': set(),
+        'alfabet': set(),
+        'start': None,
+        'finale': set(),
+        'tranzitii': {}
+    }
 
-        config = {}
-        transitions_start = False
-        self.transitions = {}
+    sectiune_curenta = None
 
-        for line in lines:
-            if transitions_start:
-                parts = line.split()
-                if len(parts) != 3:
-                    continue
-                state, symbol, next_state = parts
-                self.transitions[(state, symbol)] = next_state
-            else:
-                if line == "transitions:":
-                    transitions_start = True
-                else:
-                    if '=' in line:
-                        key, value = line.split('=', 1)
-                        config[key.strip()] = value.strip()
+    for linie in linii:
+        if linie.startswith('[') and linie.endswith(']'):
+            sectiune_curenta = linie[1:-1]
+            continue
 
-        self.states = config['states'].split(',')
-        self.alphabet = config['alphabet'].split(',')
-        self.start_state = config['start']
-        self.accept_states = config['accept'].split(',')
+        if sectiune_curenta == 'States':
+            bucati = linie.split(',')
+            stare = bucati[0]
+            configuratie['stari'].add(stare)
+            if len(bucati) > 1:
+                marcaje = bucati[1:]
+                if 'S' in marcaje:
+                    configuratie['start'] = stare
+                if 'A' in marcaje:
+                    configuratie['finale'].add(stare)
 
-    def reset(self):
-        self.current_state = self.start_state
+        elif sectiune_curenta == 'Alphabet':
+            configuratie['alfabet'].update(linie.strip())
 
-    def process(self, input_str):
-        self.reset()
-        for ch in input_str:
-            if ch not in self.alphabet:
-                return False
-            key = (self.current_state, ch)
-            if key not in self.transitions:
-                return False
-            self.current_state = self.transitions[key]
-        return self.current_state in self.accept_states
+        elif sectiune_curenta == 'Transitions':
+            sursa, simbol, destinatie = map(str.strip, linie.split(','))
+            if sursa not in configuratie['tranzitii']:
+                configuratie['tranzitii'][sursa] = {}
+            configuratie['tranzitii'][sursa][simbol] = destinatie
 
-if __name__ == "__main__":
-    dfa = DFA("dfa_config.txt")
+    return configuratie
 
-    test_words = [
-        "0",
-        "1",
-        "011",
-        "1011",
-        "000",
-        "111",
-        "0101011",
-        "0110",
-    ]
 
-    for word in test_words:
-        result = dfa.process(word)
-        print(f"Input: {word} -> Accepted: {result}")
+def simuleaza_dfa(text, dfa):
+    stare = dfa['start']
+    for caracter in text:
+        if caracter not in dfa['tranzitii'].get(stare, {}):
+            return False
+        stare = dfa['tranzitii'][stare][caracter]
+    return stare in dfa['finale']
+
+
+# Exemplu de rulare
+dfa = citeste_dfa('DFA.txt')
+cuvinte_test = ['1001', '1100', '101', '11111', '00', '0001011']
+
+for cuvant in cuvinte_test:
+    rezultat = simuleaza_dfa(cuvant, dfa)
+    mesaj = "acceptat" if rezultat else "respins"
+    print(f"{cuvant} este {mesaj} de automat.")
