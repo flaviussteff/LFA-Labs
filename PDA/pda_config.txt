@@ -8,4 +8,9 @@ q0 a A -> q0 AA
 q0 b A -> q1 ε
 q1 b A -> q1 ε
 q1 ε Z -> q_accept ε
-q0 ε Z -> q_accept ε
+
+# Adaugam 'A' in stiva cand citim 'a'
+# Stocam fiecare 'a' in stiva
+# Eliminam 'A' cand citim 'b'
+# Continuam eliminarea pentru fiecare 'b'
+# Acceptam daca stiva este goala la final

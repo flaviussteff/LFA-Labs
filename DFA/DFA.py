@@ -1,3 +1,4 @@
+# recunoaste siruri binare care contin cel putin un 0 urmat de 1, cu starea finala q2 (01)
 def citeste_dfa(drum_fisier):
     with open(drum_fisier, 'r') as fisier:
         linii = [linie.strip() for linie in fisier if linie.strip() and not linie.startswith('#')]

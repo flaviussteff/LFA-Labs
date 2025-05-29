@@ -1,0 +1,19 @@
+states: airlock corridor controlRoom engineRoom dataCore codeAirlock codeCorridor codeControl codeEngine codeCore codeFinal escapePod
+alphabet: forward back left right grab
+start: airlock
+accept: codeFinal escapePod
+transitions:
+airlock forward corridor
+codeAirlock forward codeCorridor
+corridor right controlRoom
+codeCorridor right codeControl
+corridor left engineRoom
+codeCorridor left codeEngine
+controlRoom forward dataCore
+codeControl forward codeCore
+dataCore grab codeCore
+engineRoom grab codeEngine
+controlRoom grab codeControl
+airlock grab codeAirlock
+codeCore right escapePod
+escapePod grab codeFinal

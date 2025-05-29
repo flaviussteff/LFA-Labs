@@ -1,0 +1,11 @@
+states: q0, q1, q2, halt
+alphabet: 0, 1, $, #, _
+start_state: q0
+accept_state: halt
+transition_function:
+  q0, 0 -> q0, 0, R
+  q0, 1 -> q0, 1, R
+  q0, $ -> q1, $, R
+  q1, _ -> q2, #, R
+  q2, _ -> q2, _, R
+  q2, # -> halt, #, N
